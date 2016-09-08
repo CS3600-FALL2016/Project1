@@ -88,29 +88,49 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
+
+    #print "Start:", problem.getStartState()
+    #print "Start's successors:", problem.getSuccessors(problem.getStartState())
     # Declare your closed and open list
-    closed = util.Stack()
+    closed = []
     open = util.Stack()
     # Current state = initial state
-    current = problem.getStartState()
+    current = [problem.getStartState(),'None', '1']
     # Add your initial state to your open list
-    open.append(current)
+    open.push(current)
+    closed.append(current)
     # Create parent dictionary
     parentMap = dict(current=None)
     #Start while loop
-    while not current.isGoalState() and len(open) != 0:
-        closed.push(current)
-        open.pop()
-        open.push(problem.getSuccessors(current) - current - closed)
+    while not problem.isGoalState(current) and not open.isEmpty():
+        successors = problem.getSuccessors(current[0])
+        print "Here ?? "
+        for state, direction, cost in reversed(successors):
+            #check if the state is in the closed list or is the current one
+            flag = False
+            for closedState in closed:
+                if closedState == current[0]:
+                    flag = True
+            flag = flag or state == current[0]
+            if not flag:
+                open.push([state, direction, cost])
         parent = current
         current = open.pop()
+        closed.append(current[0])
         parentMap.update(current=parent)
-    if current.isGoalState:
+    if problem.isGoalState(current):
         #you found the goal state, now iterate back up the tree to find all the parents.
-
+        path = list(current)
+        state = current
+        print "Here?"
+        while parentMap.get(state) is not None:
+            path.append(parentMap.get(state))
+            state = parentMap.get(state)
+            print "Here2.0"
+        return path.reverse()
     else:
-        return None
-
+        print "Here3.0"
+        return []
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
