@@ -88,7 +88,29 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    "*** YOUR CODE HERE ***"
+    # Declare your closed and open list
+    closed = util.Stack()
+    open = util.Stack()
+    # Current state = initial state
+    current = problem.getStartState()
+    # Add your initial state to your open list
+    open.append(current)
+    # Create parent dictionary
+    parentMap = dict(current=None)
+    #Start while loop
+    while not current.isGoalState() and len(open) != 0:
+        closed.push(current)
+        open.pop()
+        open.push(problem.getSuccessors(current) - current - closed)
+        parent = current
+        current = open.pop()
+        parentMap.update(current=parent)
+    if current.isGoalState:
+        #you found the goal state, now iterate back up the tree to find all the parents.
+
+    else:
+        return None
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
