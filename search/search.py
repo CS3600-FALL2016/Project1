@@ -96,42 +96,53 @@ def depthFirstSearch(problem):
     open = util.Stack()
     # Current state = initial state
     current = [problem.getStartState(),'None', '1']
-    # Add your initial state to your open list
-    open.push(current)
-    closed.append(current)
     # Create parent dictionary
-    parentMap = dict(current=None)
+    parentMap = {}
     #Start while loop
-    while not problem.isGoalState(current) and not open.isEmpty():
+    while not problem.isGoalState(current[0]) and open:
         successors = problem.getSuccessors(current[0])
-        print "Here ?? "
+
         for state, direction, cost in reversed(successors):
             #check if the state is in the closed list or is the current one
             flag = False
+            #Check if the succesor state is in the closed list
             for closedState in closed:
-                if closedState == current[0]:
+                if cmp(closedState, state) == 0:
                     flag = True
+            #Check if the successor state is not the current one.
             flag = flag or state == current[0]
             if not flag:
+                #add the successor states to the open list
                 open.push([state, direction, cost])
-        parent = current
-        current = open.pop()
+                # Add the new parent - state to the hashmap
+                parentMap[state] = [current[0], current[1]]
+
+
+        #Append visited state to the closed list
         closed.append(current[0])
-        parentMap.update(current=parent)
-    if problem.isGoalState(current):
+        #Take the next state in the open list.
+        current = open.pop()
+
+
+    if problem.isGoalState(current[0]):
+        path = []
+        path.append(current[1])
         #you found the goal state, now iterate back up the tree to find all the parents.
-        path = list(current)
         state = current
-        print "Here?"
-        while parentMap.get(state) is not None:
-            path.append(parentMap.get(state))
-            state = parentMap.get(state)
-            print "Here2.0"
-        return path.reverse()
+        while not cmp(parentMap.get(state[0])[0],problem.getStartState()) == 0:
+            path.append(parentMap.get(state[0])[1])
+            state = parentMap.get(state[0])
+            #print "Here2.0"
+            #print path.reverse()
+
+        path.reverse()
+        return path
     else:
-        print "Here3.0"
+        #print open, closed
+       # print "Here3.0"
         return []
-    util.raiseNotDefined()
+
+    #util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """
