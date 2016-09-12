@@ -197,16 +197,24 @@ def uniformCostSearch(problem):
     pQ = util.PriorityQueue()
     # Current state = initial state
     current = [problem.getStartState(), 'None', '1']
+    pQ.push(current)
     # Create parent dictionary
     parentMap = {}
+    minCost = 100000000000
+    #https://algorithmicthoughts.wordpress.com/2012/12/15/artificial-intelligence-uniform-cost-searchucs/
     # Start while loop
     while not problem.isGoalState(current[0]) and pQ:
-        successors = problem.getSuccessors(current[0])
+        state, direction, cost = pQ.pop()
+        successors = problem.getSuccessors(state)
         # Append visited state to the closed list
         closed.append(current[0])
         for state, direction, cost in successors:
-            # check if the state is in the closed list or is the current one
             flag = False
+            #Check if the cost of the successor is greater than the minCost
+            #If the cost is greater,dont expand it.
+            if cost > minCost:
+                flag = True
+            # check if the state is in the closed list or is the current one
             # Check if the successor state is in the closed and open list
             for closedState in closed:
                 if cmp(closedState, state) == 0:
@@ -239,7 +247,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     util.raiseNotDefined()
 
 
-# Abbreviations
+# AbbreviationsvvVVVVVVVVVVVVVVVVVVVVV
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
