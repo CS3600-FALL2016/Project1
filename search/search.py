@@ -195,42 +195,61 @@ def uniformCostSearch(problem):
 
     closed = []
     pQ = util.PriorityQueue()
+    openList = []
     # Current state = initial state
-    current = [problem.getStartState(), 'None', '1']
-    pQ.push(current)
+    current = [problem.getStartState(), 'None', 0, 0]
+    pQ.push(current, 0)
+    openList.append(current[0])
     # Create parent dictionary
     parentMap = {}
-    minCost = 100000000000
+    # minCost = float('inf')
     #https://algorithmicthoughts.wordpress.com/2012/12/15/artificial-intelligence-uniform-cost-searchucs/
     # Start while loop
     while not problem.isGoalState(current[0]) and pQ:
-        state, direction, cost = pQ.pop()
-        successors = problem.getSuccessors(state)
+        #state, direction, cost, costParent = pQ.pop()
+        current = pQ.pop()
+        openList.remove(current[0])
+        successors = problem.getSuccessors(current[0])
         # Append visited state to the closed list
         closed.append(current[0])
-        for state, direction, cost in successors:
+        for state, direction, costSucc in successors:
             flag = False
             #Check if the cost of the successor is greater than the minCost
             #If the cost is greater,dont expand it.
-            if cost > minCost:
-                flag = True
-            # check if the state is in the closed list or is the current one
+            # if costSucc > minCost
+            #     flag = True
             # Check if the successor state is in the closed and open list
             for closedState in closed:
                 if cmp(closedState, state) == 0:
                     flag = True
-            for openState in pQ.list:
-                if cmp(openState[0], state) == 0:
+            for openState in openList:
+                if cmp(openState, state) == 0:
                     flag = True
             # Check if the successor state is not the current one.
             flag = flag or cmp(state, current[0]) == 0
             if not flag:
                 # add the successor states to the open list
                 # Add the new parent - state to the hashmap
+                node = [state, direction, current[2] + costSucc, current[2]]
                 parentMap[state] = [current[0], current[1]]
+                pQ.push(node, current[2] + costSucc)
+                openList.append(state)
 
-                # Take the next state in the open list.
-        current = open.pop()
+
+        # #update minCost
+        # minCost = localMin
+    if problem.isGoalState(current[0]):
+        path = []
+        path.append(current[1])
+        # you found the goal state, now iterate back up the tree to find all the parents.
+        state = current
+        while not cmp(parentMap.get(state[0])[0], problem.getStartState()) == 0:
+            path.append(parentMap.get(state[0])[1])
+            state = parentMap.get(state[0])
+        path.reverse()
+        return path
+    else:
+        return []
     "*** YOUR CODE HERE ***"
     #util.raiseNotDefined()
 
