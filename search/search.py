@@ -198,46 +198,55 @@ def uniformCostSearch(problem):
     openList = []
     # Current state = initial state
     current = [problem.getStartState(), 'None', 0, 0]
-    pQ.push(current, 0)
-    openList.append(current[0])
     # Create parent dictionary
     parentMap = {}
-    # minCost = float('inf')
-    #https://algorithmicthoughts.wordpress.com/2012/12/15/artificial-intelligence-uniform-cost-searchucs/
     # Start while loop
     while not problem.isGoalState(current[0]) and pQ:
-        #state, direction, cost, costParent = pQ.pop()
-        current = pQ.pop()
-        openList.remove(current[0])
         successors = problem.getSuccessors(current[0])
         # Append visited state to the closed list
         closed.append(current[0])
         for state, direction, costSucc in successors:
             flag = False
-            #Check if the cost of the successor is greater than the minCost
-            #If the cost is greater,dont expand it.
-            # if costSucc > minCost
-            #     flag = True
+            flag2 = False
             # Check if the successor state is in the closed and open list
             for closedState in closed:
                 if cmp(closedState, state) == 0:
                     flag = True
             for openState in openList:
-                if cmp(openState, state) == 0:
+                if cmp(openState[0], state) == 0:
                     flag = True
+                    flag2 = True
+                    stateExtra = openState[1]
             # Check if the successor state is not the current one.
             flag = flag or cmp(state, current[0]) == 0
-            if not flag:
+            if not flag and not flag2:
                 # add the successor states to the open list
                 # Add the new parent - state to the hashmap
                 node = [state, direction, current[2] + costSucc, current[2]]
-                parentMap[state] = [current[0], current[1]]
+                parentMap[state] = [current[0], current[1], current[2]]
                 pQ.push(node, current[2] + costSucc)
-                openList.append(state)
+                openList.append([state, current[2] + costSucc])
+            elif flag2 and stateExtra > costSucc + current[2]:
+                node = [state, direction, current[2] + costSucc, current[2]]
+                parentMap[state] = [current[0], current[1], current[2]]
+                openList = []
+                pQbackup = []
+                while not pQ.isEmpty():
+                    pQbackup.append(pQ.pop())
 
+                pQ = util.PriorityQueue()
+                while not len(pQbackup) == 0:
+                    popped = pQbackup.pop()
+                    if cmp(popped[0],state) == 0:
+                        pQ.push(node, current[2] + costSucc)
+                        openList.append([popped[0], current[2] + costSucc])
+                    else:
+                        pQ.push(popped, popped[2])
+                        openList.append([popped[0], popped[2]])
 
-        # #update minCost
-        # minCost = localMin
+        current = pQ.pop()
+        openList.remove([current[0], current[2]])
+
     if problem.isGoalState(current[0]):
         path = []
         path.append(current[1])
@@ -266,7 +275,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     util.raiseNotDefined()
 
 
-# AbbreviationsvvVVVVVVVVVVVVVVVVVVVVV
+# Abbreviations
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
