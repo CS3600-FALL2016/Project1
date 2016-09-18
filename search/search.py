@@ -272,7 +272,74 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     "Search the node that has the lowest combined cost and heuristic first."
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = []
+    pQ = util.PriorityQueue()
+    openList = []
+    # Current state = initial state
+    #state, direction, totalcost, costParent
+    current = [problem.getStartState(), 'None', heuristic(problem.getStartState(), problem), 0]
+    # Create parent dictionary
+    parentMap = {}
+    # Start while loop
+    while not problem.isGoalState(current[0]) and pQ:
+        successors = problem.getSuccessors(current[0])
+        # Append visited state to the closed list
+        closed.append(current[0])
+        for state, direction, costSucc in successors:
+            flag = False
+            flag2 = False
+            # Check if the successor state is in the closed and open list
+            for closedState in closed:
+                if cmp(closedState, state) == 0:
+                    flag = True
+            for openState in openList:
+                if cmp(openState[0], state) == 0:
+                    flag = True
+                    flag2 = True
+                    stateExtra = openState[1]
+            # Check if the successor state is not the current one.
+            flag = flag or cmp(state, current[0]) == 0
+            if not flag and not flag2:
+                # add the successor states to the open list
+                # Add the new parent - state to the hashmap
+                node = [state, direction, current[2] + costSucc, current[2]]
+                parentMap[state] = [current[0], current[1], current[2]]
+                pQ.push(node, current[2] + costSucc + heuristic(state, problem))
+                openList.append([state, current[2] + costSucc])
+            elif flag2 and stateExtra > costSucc + current[2] + heuristic(state, problem):
+                node = [state, direction, current[2] + costSucc, current[2]]
+                parentMap[state] = [current[0], current[1], current[2]]
+                openList = []
+                pQbackup = []
+                while not pQ.isEmpty():
+                    pQbackup.append(pQ.pop())
+
+                pQ = util.PriorityQueue()
+                while not len(pQbackup) == 0:
+                    popped = pQbackup.pop()
+                    if cmp(popped[0],state) == 0:
+                        pQ.push(node, current[2] + costSucc + heuristic(state, problem))
+                        openList.append([popped[0], current[2] + costSucc])
+                    else:
+                        pQ.push(popped, popped[2] + heuristic(popped[0], problem))
+                        openList.append([popped[0], popped[2]])
+
+        current = pQ.pop()
+        openList.remove([current[0], current[2]])
+
+    if problem.isGoalState(current[0]):
+        path = []
+        path.append(current[1])
+        # you found the goal state, now iterate back up the tree to find all the parents.
+        state = current
+        while not cmp(parentMap.get(state[0])[0], problem.getStartState()) == 0:
+            path.append(parentMap.get(state[0])[1])
+            state = parentMap.get(state[0])
+        path.reverse()
+        return path
+    else:
+        return []
+    #util.raiseNotDefined()
 
 
 # Abbreviations

@@ -154,7 +154,7 @@ def parseHeuristic(heuristicText):
         if state in heuristic:
             return heuristic[state]
         else:
-            pp = pprint.PrettyPrinter(indent=4)        
+            pp = pprint.PrettyPrinter(indent=4)
             print "Heuristic:"
             pp.pprint(heuristic)
             raise Exception("Graph heuristic called with invalid state: " + str(state))
