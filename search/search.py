@@ -150,6 +150,7 @@ def breadthFirstSearch(problem):
     # Create parent dictionary
     parentMap = {}
     # Start while loop
+
     while not problem.isGoalState(current[0]) and open:
         successors = problem.getSuccessors(current[0])
         # Append visited state to the closed list
@@ -170,7 +171,8 @@ def breadthFirstSearch(problem):
                 # add the successor states to the open list
                 open.push([state, direction, cost])
                 # Add the new parent - state to the hashmap
-                parentMap[state] = [current[0], current[1]]
+                parentMap[state] = current
+
 
         # Take the next state in the open list.
         current = open.pop()
@@ -189,6 +191,19 @@ def breadthFirstSearch(problem):
         return []
     #util.raiseNotDefined()
 
+
+# if problem.isGoalState(current[0]):
+#     path = []
+#     path.append(current[1])
+#     # you found the goal state, now iterate back up the tree to find all the parents.
+#     state = current
+#     while not cmp(parentMap.get(state[0])[0], problem.getStartState()) == 0:
+#         path.append(parentMap.get(state[0])[1])
+#         state = parentMap.get(state[0])
+#     path.reverse()
+#     return path
+# else:
+#     return []
 def uniformCostSearch(problem):
     "Search the node of least total cost first. "
 
