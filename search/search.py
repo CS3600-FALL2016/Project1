@@ -95,7 +95,7 @@ def depthFirstSearch(problem):
     closed = []
     open = util.Stack()
     # Current state = initial state
-    current = [problem.getStartState(),'None', '1']
+    current = (problem.getStartState(),'None', '1')
     # Create parent dictionary
     parentMap = {}
     #Start while loop
@@ -113,9 +113,9 @@ def depthFirstSearch(problem):
             flag = flag or state == current[0]
             if not flag:
                 #add the successor states to the open list
-                open.push([state, direction, cost])
+                open.push((state, direction, cost))
                 # Add the new parent - state to the hashmap
-                parentMap[state] = [current[0], current[1]]
+                parentMap[state] = (current[0], current[1])
 
 
         #Append visited state to the closed list
@@ -146,7 +146,7 @@ def breadthFirstSearch(problem):
     closed = []
     open = util.Queue()
     # Current state = initial state
-    current = [problem.getStartState(), 'None', '1']
+    current = (problem.getStartState(), 'None', '1')
     # Create parent dictionary
     parentMap = {}
     # Start while loop
@@ -169,11 +169,9 @@ def breadthFirstSearch(problem):
             flag = flag or cmp(state,current[0]) == 0
             if not flag:
                 # add the successor states to the open list
-                open.push([state, direction, cost])
+                open.push((state, direction, cost))
                 # Add the new parent - state to the hashmap
                 parentMap[state] = current
-
-
         # Take the next state in the open list.
         current = open.pop()
 
@@ -182,11 +180,13 @@ def breadthFirstSearch(problem):
         path.append(current[1])
         # you found the goal state, now iterate back up the tree to find all the parents.
         state = current
+
         while not cmp(parentMap.get(state[0])[0], problem.getStartState()) == 0:
             path.append(parentMap.get(state[0])[1])
             state = parentMap.get(state[0])
         path.reverse()
         return path
+
     else:
         return []
     #util.raiseNotDefined()

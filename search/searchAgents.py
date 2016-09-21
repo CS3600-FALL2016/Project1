@@ -290,8 +290,7 @@ class CornersProblem(search.SearchProblem):
     def getStartState(self):
         "Returns the start state (in your state space, not the full Pacman state space)"
         "*** YOUR CODE HERE ***"
-        visitedCorners= []
-        return (self.startingPosition, visitedCorners)
+        return (self.startingPosition, ((),))
         #util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -301,16 +300,15 @@ class CornersProblem(search.SearchProblem):
         #Then check the boolean array to see if they are all true. If they all are then every
         #corner has been visited and you arrived at the goal
 
-        allTrue = False
+        allTrue = 0
         if state[0] in self.corners:
             #State is a corner
             for corner in self.corners:
                 for visited in state[1]:
-                    if cmp(visited,corner):
-                        allTrue = True
-                    else :
-                        allTrue = False
-        return allTrue
+                    if cmp(visited,corner) == 0:
+                        allTrue += 1;
+
+        return allTrue == 4
         #util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -325,7 +323,8 @@ class CornersProblem(search.SearchProblem):
          cost of expanding to that successor
         """
         x, y = state[0]
-        cornersVisited = list(state[1])
+        #cornersVisited = list(state[1])
+        cornersVisited = state[1]
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
@@ -336,15 +335,17 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
                 #Check if a succesor is a corner and then change the bool array
-                for corner in self.corners:
-                    if cmp(nextState, corner) == 0:
-                        #Successor is a corner
-                        #check if it has been visited before
-                        if not nextState in cornersVisited:
-                            cornersVisited.append(nextState)
+                if nextState in self.corners:
+                    #Successor is a corner
+                    #check if it has been visited before
+                    if not nextState in cornersVisited:
+                        cornersVisited = (nextState,) + cornersVisited
                     #successors.append(((nextState, cornersVisited), action, 1))
-                        #Successor is not a corner
-                    successors.append(((nextState, cornersVisited), action, 1))
+                    #Successor is not a corner
+                succesor = ((nextState, cornersVisited), action, 1)
+                successors.append(succesor)
+                cornersVisited = state[1]
+                    #successors.append(((nextState, cornersVisited), action, 1))
         return successors
 
         #
