@@ -412,13 +412,14 @@ def cornersHeuristic(state, problem):
 
     #cornersLeft will hold all the unvisited corners in the problem
     #use both euclidean and manhattan and average them out
-    manCost = 0
-    euCost = 0
+    manCost = []
+    euCost = []
     for corner in cornersLeft:
-        manCost += util.manhattanDistance(state[0][0], corner)
-        euCost += euclideanHeuristic2(state[0][0], corner)
-
-    totalCost = (manCost + euCost)/2
+        manCost.append(util.manhattanDistance(state[0], corner))
+        euCost.append(euclideanHeuristic2(state[0], corner))
+    if len(cornersLeft) == 0:
+        return 0
+    totalCost = (min(manCost) + min(euCost))/2
     "*** YOUR CODE HERE ***"
     return totalCost # Default to trivial solution
 
