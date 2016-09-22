@@ -260,6 +260,12 @@ def euclideanHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
+def euclideanHeuristic2(position, problem, info={}):
+    "The Euclidean distance heuristic for a PositionSearchProblem"
+    xy1 = position
+    xy2 = problem
+    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+
 #####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
@@ -348,28 +354,6 @@ class CornersProblem(search.SearchProblem):
                     #successors.append(((nextState, cornersVisited), action, 1))
         return successors
 
-        #
-        # x,y = state[0]
-        # visitedCorners = state[1]
-        #
-        # successors = []
-        # for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-        #
-        #     dx, dy = Actions.directionToVector(action)
-        #     nextx, nexty = int(x + dx), int(y + dy)
-        #     hitsWall = self.walls[nextx][nexty]
-        #     if not hitsWall:
-        #         successorVisitedCorners = list(visitedCorners)
-        #         next_node = (nextx, nexty)
-        #         if next_node in self.corners:
-        #             if not next_node in successorVisitedCorners:
-        #                 successorVisitedCorners.append( next_node )
-        #         successor = ((next_node, successorVisitedCorners), action, 1)
-        #         successors.append(successor)
-        #
-        # self._expanded += 1
-        # return successors
-
         # successors = []
         # for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
         #     x,y = state
@@ -412,9 +396,31 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    #state is a tuple of tuples containing:
+    #state[0] = current state
+    #state[1] = tuple of tuples of visited corners.
 
+    current = state[0]
+    visitedCorners = state[1]
+    #Goal state means all corners have been visited.
+    #How much cost to get from current state to all the unvisited corners
+
+    cornersLeft = []
+    for corner in corners:
+        if corner not in visitedCorners:
+            cornersLeft.append(corner)
+
+    #cornersLeft will hold all the unvisited corners in the problem
+    #use both euclidean and manhattan and average them out
+    manCost = 0
+    euCost = 0
+    for corner in cornersLeft:
+        manCost += util.manhattanDistance(state[0][0], corner)
+        euCost += euclideanHeuristic2(state[0][0], corner)
+
+    totalCost = (manCost + euCost)/2
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    return totalCost # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
