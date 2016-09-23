@@ -511,8 +511,26 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    foodList = foodGrid.asList()
+    walls  = problem.walls
+    #food list returns a tuple of x and y positions where food is still available
+    #info = dir(problem)
+
+    #This returned 14017 nodes
+    # if len(foodList) > 0:
+    #     manDist = []
+    #     euDist = []
+    #     for foodPos in foodList:
+    #         # calculate the manDistance
+    #         manDist.append(util.manhattanDistance(position, foodPos))
+    #         euDist.append(euclideanHeuristic2(position, foodPos))
+    #     totalCost = (min(manDist) + min(euDist)) / 2
+    #     return totalCost
+    # else:
+    #     #Goal State achieved, there's no longer food in the grid.
+    #     return 0
+    #This returned 12516
+    #return len(foodList)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
