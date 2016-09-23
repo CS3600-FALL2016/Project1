@@ -530,7 +530,7 @@ def foodHeuristic(state, problem):
     #     #Goal State achieved, there's no longer food in the grid.
     #     return 0
     #This returned 12516
-    #return len(foodList)
+    return len(foodList)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -556,9 +556,11 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
+        actionList = search.bfs(problem)
 
+        return actionList
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -591,10 +593,14 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         The state is Pacman's position. Fill this in with a goal test
         that will complete the problem definition.
         """
-        x,y = state
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        pos = state
+        #If the current state has food then its a goal state.
+        foodGrid = self.food
+        foodList = foodGrid.asList()
+        for foodPos in foodList:
+            if cmp(pos, foodPos) == 0:
+                return True
+        return False
 
 ##################
 # Mini-contest 1 #
