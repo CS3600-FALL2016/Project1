@@ -517,20 +517,35 @@ def foodHeuristic(state, problem):
     #info = dir(problem)
 
     #This returned 14017 nodes
-    # if len(foodList) > 0:
-    #     manDist = []
-    #     euDist = []
-    #     for foodPos in foodList:
-    #         # calculate the manDistance
-    #         manDist.append(util.manhattanDistance(position, foodPos))
-    #         euDist.append(euclideanHeuristic2(position, foodPos))
-    #     totalCost = (min(manDist) + min(euDist)) / 2
-    #     return totalCost
-    # else:
-    #     #Goal State achieved, there's no longer food in the grid.
-    #     return 0
+    if len(foodList) > 0:
+        foodIter = foodList
+        totalCost = 0
+        while len(foodIter) > 0:
+            foodDict = {}
+            for foodPos in foodIter:
+                # calculate the manDistance and euDistance
+                manDist= util.manhattanDistance(position, foodPos)
+                euDist = euclideanHeuristic2(position, foodPos)
+                #store the position of the food and the distance from current position
+                foodDict[foodPos] = {(manDist + euDist)/2}
+            minVal = min(foodDict.values())
+            minPosition = ()
+            for key in foodDict.keys():
+                if foodDict[key] == minVal:
+                    minPosition = key
+            totalCost += minVal
+
+
+
+        return 0
+    else:
+        #Goal State achieved, there's no longer food in the grid.
+        return 0
     #This returned 12516
-    return len(foodList)
+
+    #http://stackoverflow.com/questions/9994913/pacman-what-kinds-of-heuristics-are-mainly-used
+
+    #return len(foodList)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
