@@ -451,6 +451,7 @@ class FoodSearchProblem:
     def isGoalState(self, state):
         return state[1].count() == 0
 
+
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of 1."
         successors = []
@@ -512,38 +513,86 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     foodList = foodGrid.asList()
-    walls  = problem.walls
-    #food list returns a tuple of x and y positions where food is still available
-    #info = dir(problem)
-
-    #This returned 14017 nodes
-    if len(foodList) > 0:
-        foodIter = foodList
-        totalCost = 0
-        while len(foodIter) > 0:
-            foodDict = {}
-            for foodPos in foodIter:
-                # calculate the manDistance and euDistance
-                manDist= util.manhattanDistance(position, foodPos)
-                euDist = euclideanHeuristic2(position, foodPos)
-                #store the position of the food and the distance from current position
-                foodDict[foodPos] = {(manDist + euDist)/2}
-            minVal = min(foodDict.values())
-            minPosition = ()
-            for key in foodDict.keys():
-                if foodDict[key] == minVal:
-                    minPosition = key
-            totalCost += minVal
-
-
-
+    #Check for goal state
+    if len(foodList) == 0:
         return 0
-    else:
-        #Goal State achieved, there's no longer food in the grid.
-        return 0
+
+    foodDict = {}
+    #Find the closest food to the Pacman position
+    for foodPos in foodList:
+        # calculate the manDistance and euDistance
+        manDist = util.manhattanDistance(position, foodPos)
+        euDist = euclideanHeuristic2(position, foodPos)
+        # store the position of the food and the distance from current position
+        foodDict[foodPos] = (manDist + euDist) / 2
+
+    minVal = min(foodDict.values())
+    #minPosition holds the closest food from the state
+    minPosition = ()
+    #iterate through the keys to find the coordinates of the minimum value
+    for key in foodDict.keys():
+        if foodDict[key] == minVal:
+            minPosition = key
+    totalCost = foodDict[minPosition]
+    #Compare the x and y coordinates of the closest fruit and the currentPacman state, if they are different
+    #add 1 to the counter.
+    xCurr, yCurr = position
+    xClose, yClose = minPosition
+    notCloseCounter = 0
+    foodList.remove(minPosition)
+    for foodPos in foodList:
+        xNew, yNew = foodPos
+        if not xNew == xCurr or not xNew == xClose or not yNew == yCurr or not yNew == yClose:
+            notCloseCounter += 1
+
+    return totalCost + notCloseCounter
+
+
+    # #food list returns a tuple of x and y positions where food is still available
+    # #info = dir(problem)
+    # foodDict = {}
+    # totalCost = 0
+    #
+    #
+    # #Find the initial min value
+    # for foodPos in foodList:
+    #     # calculate the manDistance and euDistance
+    #     manDist = util.manhattanDistance(position, foodPos)
+    #     euDist = euclideanHeuristic2(position, foodPos)
+    #     # store the position of the food and the distance from current position
+    #     foodDict[foodPos] = (manDist + euDist) / 2
+    # minVal = min(foodDict.values())
+    # #minPosition holds the closest food from the state
+    # minPosition = ()
+    # #iterate through the keys to find the coordinates of the minimum value
+    # for key in foodDict.keys():
+    #     if foodDict[key] == minVal:
+    #         minPosition = key
+    # totalCost += foodDict[minPosition]
+    # foodList.remove(minPosition)
+    #
+    # while len(foodList) > 0:
+    #     foodDict = {}
+    #     #Find closest food from the previous minimum
+    #     for foodPos in foodList:
+    #         # calculate the manDistance and euDistance
+    #         manDist = util.manhattanDistance(minPosition, foodPos)
+    #         euDist = euclideanHeuristic2(minPosition, foodPos)
+    #         # store the position of the food and the distance from current position
+    #         foodDict[foodPos] = (manDist + euDist) / 2
+    #     minVal = min(foodDict.values())
+    #     #minPosition holds the closest food from the state
+    #     minPosition = ()
+    #     for key in foodDict.keys():
+    #         if foodDict[key] == minVal:
+    #             minPosition = key
+    #     totalCost += foodDict[minPosition]
+    #     foodList.remove(minPosition)
+    #
+    #
+    # return totalCost
+
     #This returned 12516
-
-    #http://stackoverflow.com/questions/9994913/pacman-what-kinds-of-heuristics-are-mainly-used
 
     #return len(foodList)
 
